@@ -3,6 +3,7 @@
 import discord
 from discord.ext import commands
 import random
+import time
 from Generador import * #El * significa Todo
 from Lanzarmoneda import throw_coin
 
@@ -15,7 +16,7 @@ intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
 
-bot = commands.Bot(command_prefix='?', description=description, intents=intents)
+bot = commands.Bot(command_prefix='?', description=description, intents=intents, help_command = None)
 
 
 @bot.event
@@ -41,6 +42,25 @@ async def coin(ctx, lon:int = 1):
     for i in range(lon):
         await ctx.send("The coin turned out to be:")
         await ctx.send(throw_coin())
+
+
+
+@bot.command()
+async def help(ctx):
+    await ctx.send("Add a '?' sign before all the commands:")
+    time.sleep(1)
+    await ctx.send("add --> Adds two numbers together, add the two numbers after the command")
+    await ctx.send("password --> Creates a password, add the number of characters after the command")
+    await ctx.send("coin --> Flip a coin, you can add the number of times it would flip the coin")
+    await ctx.send("roll --> Rolls a dice, add first the number of dices and then the faces the dice has")
+    await ctx.send("choose --> Chooses between multiple choices, add the choices after the command")
+    await ctx.send("repeat --> Repeats a message several times, add the times you want the message to be repeated")
+    await ctx.send("joined --> Says when a member joins")
+    await ctx.send("cool --> Says if a user is cool")
+    await ctx.send("_bot --> Asks and says if the bot is cool, add ?cool bot, to initialize")
+    await ctx.send("help --> Makes a list of all the commands")
+
+
 @bot.command()
 async def roll(ctx, dice: str):
     """Rolls a dice in NdN format."""
