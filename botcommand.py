@@ -49,7 +49,15 @@ async def meme(ctx):
     await ctx.send(file=picture) #Envia un archivo, y el archivo es picture(El que creemamos en la linea 44)
 
 
-def get_duck_image_url():    
+@bot.command()
+async def memeAnimales(ctx):
+    meme = random.choice(os.listdir("MemesAnimales")) #Choose a random meme from Memes Animales
+    with open(f"MemesAnimales/{meme}", "rb") as f: #It opens Memes Animales and shows the meme that the function meme has chose
+        picture = discord.File(f) #picture is equal to the discord file of meme
+    await ctx.send(file=picture) #sends the variable picture
+
+
+def get_duck_image_url():   
     url = 'https://random-d.uk/api/random' #Lleva a un lugar con imagenes de pato aleatorias
     res = requests.get(url)
     data = res.json()
