@@ -6,6 +6,8 @@ import random
 import time
 from Generador import * #El * significa Todo
 from Lanzarmoneda import throw_coin
+import os
+import requests
 
 description = '''An example bot to showcase the discord.ext.commands extension
 module.
@@ -38,6 +40,54 @@ async def password(ctx, lon:int = 8): #Si no se escribe nada sera 8
 
 
 @bot.command()
+async def meme(ctx):
+    Meme = random.choice(os.listdir('Memes')) #listdir --> Crea una lista todos los elementos dentro de una carpeta
+    with open(f'Memes/{Meme}', 'rb') as f: #Archivo/nombre de la imagen. Formato 'f' permite agregar una variable, usando {}
+        # ¡Vamos a almacenar el archivo de la biblioteca Discord convertido en esta variable!
+        picture = discord.File(f) #Le damoss formato de archivo de Discord para que lo pueda leer
+    # A continuación, podemos enviar este archivo como parámetro.
+    await ctx.send(file=picture) #Envia un archivo, y el archivo es picture(El que creemamos en la linea 44)
+
+
+def get_duck_image_url():    
+    url = 'https://random-d.uk/api/random' #Lleva a un lugar con imagenes de pato aleatorias
+    res = requests.get(url)
+    data = res.json()
+    return data['url']
+
+
+@bot.command('duck') #Manda imagenes aleatorias de patos
+async def duck(ctx):
+    '''Una vez que llamamos al comando duck, 
+    el programa llama a la función get_duck_image_url'''
+    image_url = get_duck_image_url()
+    await ctx.send(image_url)
+
+
+def get_random_pokemon_image():
+    random_id = random.randint(1, 1025)  # There are 1025 Pokémon in the API
+    url = f"https://pokeapi.co/api/v2/pokemon/{random_id}" #Adds to the link the pokemon number we would get
+    res = requests.get(url)
+    if res.status_code == 200:
+        data = res.json() #Gives the image of the pokemon
+        name = data["name"] #Gives the name of the pokemon
+        image_url = data["sprites"]["front_default"] #Pokemon sprite URL
+        return name, image_url
+    else:
+        return None, None
+
+@bot.command()
+async def pokemon(ctx):
+    """Sends a random Pokémon image when the user types ?pokemon"""
+    name, image_url = get_random_pokemon_image()
+    if name and image_url:
+        await ctx.send(f"The pokemon name is: **{name}**")
+        await ctx.send(image_url)
+    else:
+        await ctx.send("Oops! Something went wrong. Try again.")
+
+
+@bot.command()
 async def coin(ctx, lon:int = 1):
     for i in range(lon):
         await ctx.send("The coin turned out to be:")
@@ -58,6 +108,7 @@ async def help(ctx):
     await ctx.send("joined --> Says when a member joins")
     await ctx.send("cool --> Says if a user is cool")
     await ctx.send("_bot --> Asks and says if the bot is cool, add ?cool bot, to initialize")
+    await ctx.send("meme --> Shows a meme")
     await ctx.send("help --> Makes a list of all the commands")
 
 
